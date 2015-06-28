@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+{% if months %}
+    <ul>
+    {% for month in months %}
+        <li><a href="{% url 'expenses:month' month.id %}">{{ month.year }}/{{ month.month }}: {{ month.balance }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No months are available.</p>
+{% endif %}
+
+</body>
+</html>

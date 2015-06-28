@@ -1,0 +1,68 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-06-28 15:58+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: expenses/templates/expenses/month.html:16
+msgid "Balance:"
+msgstr ""
+
+#: expenses/templates/expenses/month.html:24
+msgid "Budgets"
+msgstr ""
+
+#: expenses/templates/expenses/month.html:32
+#: expenses/templates/expenses/month.html:65
+#: expenses/templates/expenses/month.html:73
+#: expenses/templates/expenses/month.html:97
+#: expenses/templates/expenses/month.html:105
+msgid "Description"
+msgstr ""
+
+#: expenses/templates/expenses/month.html:32
+#: expenses/templates/expenses/month.html:63
+#: expenses/templates/expenses/month.html:71
+#: expenses/templates/expenses/month.html:95
+#: expenses/templates/expenses/month.html:103
+msgid "Amount"
+msgstr ""
+
+#: expenses/templates/expenses/month.html:37
+msgid "Unused"
+msgstr ""
+
+#: expenses/templates/expenses/month.html:58
+msgid "Deposits"
+msgstr ""
+
+#: expenses/templates/expenses/month.html:62
+#: expenses/templates/expenses/month.html:70
+#: expenses/templates/expenses/month.html:94
+#: expenses/templates/expenses/month.html:102
+msgid "Date"
+msgstr ""
+
+#: expenses/templates/expenses/month.html:64
+#: expenses/templates/expenses/month.html:72
+#: expenses/templates/expenses/month.html:96
+#: expenses/templates/expenses/month.html:104
+msgid "Type"
+msgstr ""
+
+#: expenses/templates/expenses/month.html:90
+msgid "Withdrawals"
+msgstr ""

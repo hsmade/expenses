@@ -1,0 +1,175 @@
+{% load staticfiles %}
+{% load i18n %}
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>{{ month.year }}/{{ month.month }}</title>
+    <link href="{% static 'expenses/jquery.dataTables.css' %}" rel="stylesheet">
+    <link href="{% static 'expenses/dataTables.responsive.css' %}" rel="stylesheet">
+    <link href="{% static 'expenses/dataTables.tableTools.css' %}" rel="stylesheet">
+    <link href="{% static 'expenses/month.css' %}" rel="stylesheet">
+    <script src="{% static 'expenses/jquery-1.11.3.min.js' %}"></script>
+
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+
+    <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['corechart']}]}"></script>
+</head>
+<body>
+<h1>{{ month.year }}/{{ month.month }}</h1>
+<P><b>{% trans "Balance:"  %}</b>
+{% if month.balance > 0 %}
+    <span style="color: green;">{{ month.balance }}</span>
+{% else %}
+    <span style="color: green;">{{ month.balance }}</span>
+{% endif %}
+</P>
+
+<script type="application/javascript">
+    function slide(id) {
+        var div = $(id);
+        console.log('Slide for '+id);
+        if (div.css('display') == 'none')
+            div.slideDown();
+        else
+            div.slideUp();
+    }
+</script>
+
+<h3 onclick="slide('#budgets')">{% trans "Budgets" %}</h3>
+<div id="budgets" style="overflow: auto">
+{% for budget in budgets %}
+    <div id="{{ budget.type.name }}" style="width: 300px; height: 200px; float: left"></div>
+    <script type="text/javascript">
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['{% trans "Description" %}', '{% trans "Amount" %}'],
+            {% for withdrawal in budget.withdrawals %}
+                ['{{ withdrawal.description }}', {{ withdrawal.amount }}],
+            {% endfor %}
+            {% if budget.unused %}
+                ['{% trans "Unused" %}', {{ budget.unused }} ]
+            {% endif %}
+            ]);
+            var options = {
+            {% if budget.type.max_allowed %}
+                title: '{{ budget.type.name }}({{ budget.type.max_allowed }})',
+            {% else %}
+                title: '{{ budget.type.name }}',
+            {% endif %}
+                sliceVisibilityThreshold: 0.1,
+                pieSliceText: 'value',
+                chartArea:{left:0,top:16,width:'90%',height:'100%'}
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('{{ budget.type.name }}'));
+            chart.draw(data, options);
+        }
+    </script>
+{% endfor %}
+</div>
+<hr>
+
+<h3 onclick="slide('#deposits_table')">{% trans "Deposits" %}</h3>
+<div id="deposits_table" style="display: none">
+    <table id="deposits" class="display responsive" cellspacing="0" width="100%">
+        <thead>
+            <tr align="left">
+                <th class="all">{% trans "Date" %}</th>
+                <th class="all">{% trans "Amount" %}</th>
+                <th class="all">{% trans "Type" %}</th>
+                <th class="none">{% trans "Description" %}</th>
+                <th class="all">&nbsp;</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr align="left">
+                <th class="all">{% trans "Date" %}</th>
+                <th class="all">{% trans "Amount" %}</th>
+                <th class="all">{% trans "Type" %}</th>
+                <th class="none">{% trans "Description" %}</th>
+                <th class="all">&nbsp;</th>
+            </tr>
+        </tfoot>
+        <tbody>
+    {% for deposit in deposits %}
+            <tr class="deposit">
+                <td>{{ deposit.date }}</td>
+                <td>{{ deposit.amount }}</td>
+                <td>{{ deposit.deposit_type }}</td>
+                <td>{{ deposit.description }}</td>
+                <td><a href="{% url 'expenses:deposit-delete' month.id deposit.id %}">delete</a></td>
+            </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p><button onclick="$('#new_deposit').dialog({width:600})">{%  trans "Add new" %}</button></p>
+<div id="new_deposit" style="display: none">
+    <form action="deposit/-1/" method="post">
+        <table id="new_deposit">
+        {{ deposit_form.as_table }}
+        <tr><td colspan="2"><input type="submit" /></td></tr>
+        </table>
+        {% csrf_token %}
+    </form>
+</div>
+<hr>
+
+<h3 onclick="slide('#withdrawals_table')">{% trans "Withdrawals" %}</h3>
+<div id="withdrawals_table" style="display:none">
+    <table id="withdrawals" class="display responsive" cellspacing="0" width="100%">
+        <thead>
+            <tr align="left">
+                <th class="all">{% trans "Date" %}</th>
+                <th class="all">{% trans "Amount" %}</th>
+                <th class="all">{% trans "Type" %}</th>
+                <th class="none">{% trans "Description" %}</th>
+                <th class="all">&nbsp;</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr align="left">
+                <th class="all">{% trans "Date" %}</th>
+                <th class="all">{% trans "Amount" %}</th>
+                <th class="all">{% trans "Type" %}</th>
+                <th class="none">{% trans "Description" %}</th>
+                <th class="all">&nbsp;</th>
+            </tr>
+        </tfoot>
+        <tbody>
+    {% for withdrawal in withdrawals %}
+            <tr class="withdrawal">
+                <td>{{ withdrawal.date }}</td>
+                <td>{{ withdrawal.amount }}</td>
+                <td>{{ withdrawal.withdrawal_type }}</td>
+                <td>{{ withdrawal.description }}</td>
+                <td><a href="{% url 'expenses:withdrawal-delete' month.id withdrawal.id %}">delete</a></td>
+            </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p><button onclick="$('#new_withdrawal').dialog({width:600})">{%  trans "Add new" %}</button></p>
+<div id="new_withdrawal" style="display: none">
+    <form action="withdrawal/-1/" method="post">
+        <table id="new_withdrawal">
+        {{ withdrawal_form.as_table }}
+        <tr><td colspan="2"><input type="submit" /></td></tr>
+        </table>
+        {% csrf_token %}
+    </form>
+</div>
+
+<script src="{% static 'expenses/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'expenses/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'expenses/dataTables.tableTools.min.js' %}"></script>
+<script>
+    $(document).ready(function() {
+    $('#deposits').DataTable();
+    $('#withdrawals').DataTable();
+} );
+</script>
+</body>
+</html>
