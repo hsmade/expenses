@@ -1,0 +1,21 @@
+# upload file, parse
+# for each statement, for each transaction
+#   import record if not already there, mark as type=new
+# for each new record, show a line that allows to change the type and store
+# v2: have change all, or select boxes and change all, save when changed
+# store current balance on month
+
+# on monthly view, show mismatch between actual balance and calculated balance:
+#   positive mismatch, book to savings account
+#   negative mismatch, withdraw from savings account
+
+# savings account overview shows reservations, their current value and 'rest'
+#   allows to add money to reservations from rest
+#   when rest is negative, show alert
+
+
+import os
+os.chdir('/home/wfournier/private/expenses/')
+from labs import rabo
+ding = rabo.CSVExport('/home/wfournier/Downloads/transactions.txt')
+print ding.transactions[0]

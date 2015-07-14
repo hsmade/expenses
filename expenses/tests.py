@@ -3,6 +3,39 @@ from django.utils import timezone
 from .models import Month, Withdrawal, Deposit, DepositType, WithdrawalType
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from . import import_data
+from expenses.lib import rabo
+from tempfile import NamedTemporaryFile
+
+
+class ImportTest(TestCase):
+    def setUp(self):
+        self.temp_file = NamedTemporaryFile(delete=False)
+        with self.temp_file as temp_file:
+            temp_file.write('"NL11RABO0123456789","EUR","20150615","D","100.00","NL22RABO0123456789","My Name","20150615","tb","Description","line","another","line 4","line5","end","","123456789","",""\r\n')
+            temp_file.write('"NL11RABO0123456789","EUR","20150615","C","100.00","NL22RABO0123456789","My Name","20150615","tb","Description","line","another","line 4","line5","end","","123456789","",""\r\n')
+
+    def test_read_csv(self):
+        data = rabo.CSVExport(self.temp_file.name)
+        self.assertTrue(data.transactions)
+        self.assertEqual(data.transactions[0].description, 'Description line another line 4 line5 end')
+
+    def test_import(self):
+        month = Month.objects.create(year=2015, month=1)
+        import_data.import_rabo(self.temp_file.name, month)
+        withdrawal = False
+        try:
+            withdrawal = Withdrawal.objects.get(month=month, description='Description line another line 4 line5 end')
+        except Exception as e:
+            self.assertFalse(True, e)
+        self.assertTrue(withdrawal)
+
+        deposit = False
+        try:
+            deposit = Deposit.objects.get(month=month, description='Description line another line 4 line5 end')
+        except Exception as e:
+            self.assertFalse(True, e)
+        self.assertTrue(deposit)
 
 
 class ExpensesViewTest(TestCase):
